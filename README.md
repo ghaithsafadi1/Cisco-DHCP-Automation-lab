@@ -1,31 +1,28 @@
-# ⚡DHCP Automation & Connectivity (Cisco Packet Tracer)
+# ⚡ Lab: Customizing DHCP Services on a Wireless Router
 
-## 📖 Project Overview
-This lab demonstrates the transition from a manual, static IP environment to an automated **Dynamic Host Configuration Protocol (DHCP)** infrastructure. Using Cisco Packet Tracer, I configured a wireless router to act as a DHCP server, providing seamless "Plug and Play" connectivity for multiple end-devices while eliminating the risk of manual entry errors.
+## 📖 Scenario
+In this lab, I transitioned a standard home-office setup from its default "out-of-the-box" configuration to a custom IP schema. The project focuses on changing the management IP of the router and redefining the client address pool for better network control.
 
-## 🛠️ Implementation Details
-The core of this lab involves moving away from the "Static" assignment method and allowing the network to manage itself through automated leasing.
+## 🛠️ Implementation Steps
 
-### 1. Router Configuration (The Gateway)
-The router was configured with the following parameters to manage the local network:
-* **LAN IP (Gateway):** `172.16.0.1`
-* **Subnet Mask:** `255.255.255.0`
-* **DHCP Pool Start:** `172.16.0.100`
-* **Maximum Users:** 50
+### 1. Gateway & Pool Modification
+* **Original Gateway:** 192.168.0.1
+* **New Management IP:** `192.168.5.1`
+* **Custom DHCP Range:** Set to start at `.126` with a maximum of `75` users.
 
-### 2. The DORA Process
-By monitoring the simulation, I verified the four-step handshake that occurs when a PC joins the network:
-1. **Discover:** The PC broadcasts to find a DHCP server.
-2. **Offer:** The Router offers an available IP (`.100`).
-3. **Request:** The PC requests to use that specific IP.
-4. **Acknowledgment (ACK):** The Router confirms the lease.
+### 2. The "Lease Renewal" Challenge
+Changing the router's IP mid-session causes a "Request Timeout" in the browser. I solved this by:
+1. Toggling the client PC from **DHCP** to **Static** and back to **DHCP**.
+2. This forced a new **DORA** handshake, allowing the PC to receive the updated Gateway info (`192.168.5.1`) and a new IP from the updated pool.
 
-### 3. Verification & Testing
-To ensure the network was fully functional, I performed the following tests:
-* **IP Verification:** Checked that PC0, PC1, and PC2 received sequential IPs (`.100`, `.101`, `.102`).
-* **Connectivity Test:** Executed `ping` commands between workstations to verify that dynamically assigned hosts can communicate across the LAN.
+### 3. Verification Table
+| Device | Assigned IP | Gateway | Result |
+| :--- | :--- | :--- | :--- |
+| **PC0** | 192.168.5.126 | 192.168.5.1 | ✅ Success |
+| **PC1** | 192.168.5.127 | 192.168.5.1 | ✅ Success |
+| **PC2** | 192.168.5.128 | 192.168.5.1 | ✅ Success |
 
-```bash
-# Example verification from PC0 Command Prompt
-ping 172.16.0.101  # Success
-ping 172.16.0.102  # Success
+## 🏁 Key Technical Takeaway
+Understanding that the **Default Gateway** is the "door" out of the network. If the door moves (changing the Router IP), every client must be updated or "renewed" to find the new exit.
+
+---
